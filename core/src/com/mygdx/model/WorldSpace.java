@@ -55,5 +55,6 @@ public class WorldSpace {
 
     public World getPhysics() { return physics; }
 
+int i;
 
 }

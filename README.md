@@ -1,2 +1,0 @@
-# asteroid
-Java libGDX Game

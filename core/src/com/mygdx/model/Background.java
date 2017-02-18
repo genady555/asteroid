@@ -51,18 +51,18 @@ public class Background extends MySprite {
             speed = (float)Math.random() * SPEED;
             setScale(speed/SPEED);
             angleMove = 180;
-            setX((float)Math.random() * GdxGame.WIDTH);
-            setY((float)Math.random() * GdxGame.HEIGHT);
+            setX((float)Math.random() * WorldSpace.WIDTH);
+            setY((float)Math.random() * WorldSpace.HEIGHT);
         }
         
         public void update(){
             move();
             if (getX() < 0) {
-                setX(GdxGame.WIDTH);
-                setY((float)Math.random() * GdxGame.HEIGHT);
-            } else if(getX() > GdxGame.WIDTH){
+                setX(WorldSpace.WIDTH);
+                setY((float)Math.random() * WorldSpace.HEIGHT);
+            } else if(getX() > WorldSpace.WIDTH){
                 setX(0);
-                setY((float)Math.random() * GdxGame.HEIGHT);
+                setY((float)Math.random() * WorldSpace.HEIGHT);
             }
         }
         

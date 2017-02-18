@@ -70,8 +70,7 @@ public class Hero extends MySprite{
 
     public void start() {
         body.setLinearVelocity(0, 0);
-        body.setTransform(100, 100,0);
-        setCenter(100, 100);
+        body.setTransform(5, 35,0);
         speed = 0;
         accel = 0;
         angleMove = 0;
@@ -82,41 +81,20 @@ public class Hero extends MySprite{
     public Bullet[] getBullets() { return bullets; }
     
     public void update(){
-        input();
-        if (speed > maxSpeed){
-            speed = maxSpeed;
-            accel = 0;
-        }
         float x = body.getPosition().x;
         float y = body.getPosition().y;
         if (x < -getWidth())
-            x = GdxGame.WIDTH;
-        if (x > GdxGame.WIDTH)
+            x = WorldSpace.WIDTH;
+        if (x > WorldSpace.WIDTH)
             x = -getWidth();
         if (y < -getHeight())
-            y = GdxGame.HEIGHT;
-        if (y > GdxGame.HEIGHT)
+            y = WorldSpace.HEIGHT;
+        if (y > WorldSpace.HEIGHT)
             y = -getHeight();
         body.setTransform(x, y, (float)Math.toRadians(angleMove));
-        setX(x);
-        setY(y);
+        setPosition(x, y);
         for (Bullet bullet : bullets)
             bullet.update();
-    }
-
-    private void input() {
-        accel = 0;
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-            fire();
-        if(Gdx.input.isKeyPressed(Input.Keys.UP))
-            //accel = drive;
-            accelerate();
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
-            accel = -drive;
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-            angleMove -= rotate;
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
-            angleMove += rotate;
     }
 
     public void accelerate() {
@@ -125,13 +103,23 @@ public class Hero extends MySprite{
         body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, false);
     }
 
+    public void brake() {
+        float ax = drive * (float)Math.cos(Math.toRadians(angleMove - 180));
+        float ay = drive * (float)Math.sin(Math.toRadians(angleMove - 180));
+        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, false);
+    }
+
+    public void turnLeft() { angleMove += rotate; }
+
+    public void turnRight() { angleMove -= rotate; }
+
     public void fire() {
         long time = System.currentTimeMillis();
         long dt = time - timeFire;
         if(dt >= pauseFire){
             for (Bullet bullet : bullets) {
                 if (bullet.isActive()) continue;
-                bullet.create(getX() + getWidth()/2, getY() + getHeight()/2, body.getLinearVelocity().x, angleMove);
+                bullet.create(body.getPosition().x, body.getPosition().y, body.getLinearVelocity().len(), angleMove);
                 break;
             }
             timeFire = time;

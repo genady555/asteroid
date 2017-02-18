@@ -11,18 +11,21 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
+
 /**
  *
  * @author Rrr
  */
 class MySprite extends Sprite{
-    
+
     static protected SpriteBatch batch;
 
     protected float speed;
     protected boolean active = true;
     protected float angleMove;
     protected float accel;
+    protected float ax, ay;
+    protected Texture texture;
 
     public static void setBatch(SpriteBatch batch){
         if(MySprite.batch == null)
@@ -36,6 +39,10 @@ class MySprite extends Sprite{
 
     public MySprite(Texture texture){
         super(texture);
+        ax = Gdx.graphics.getWidth()/WorldSpace.WIDTH;
+        ay = Gdx.graphics.getHeight()/WorldSpace.HEIGHT;
+        setSize(getWidth()/ax, getHeight()/ay);
+        setOriginCenter();
     }
     
     //public MySprite(String filename) {

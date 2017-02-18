@@ -54,7 +54,7 @@ public class Bullet extends MySprite {
     public void update(){
         if(!active) return;
         move();
-        if (getX() > GdxGame.WIDTH || getY() < -getWidth() || getY() < -getHeight() || getY() > GdxGame.HEIGHT)
+        if (getX() > WorldSpace.WIDTH || getY() < -getWidth() || getY() < -getHeight() || getY() > WorldSpace.HEIGHT)
             destroy();
      }
 }

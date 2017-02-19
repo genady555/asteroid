@@ -7,6 +7,7 @@ package com.mygdx.model;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.view.GameScreen;
 
 import java.awt.*;
 
@@ -14,13 +15,14 @@ import java.awt.*;
  *
  * @author Rrr
  */
-public class  Asteroid extends MySprite {
+public class  Asteroid extends Subject {
 
-    final static int SHIELD = 5;
+    final static int SHIELD = 10;
     final static int DAMAGE = 25;
+    final static float DENSITY = 1000;
     final static float ACCEL = 5f;
     final static float SPEED = 15f;
-    final static float SIZE = 0.25f;
+    final static float MIN_SIZE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
 
     static int count;
@@ -28,29 +30,25 @@ public class  Asteroid extends MySprite {
     private float hp;
     private int shield;
     private int level;
-    private Body body;
-    private Fixture fixture;
 
     public Asteroid(int level, World world) {
-        super(texture);
+        super(world, texture);
         this.level = level;
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
         def.active = true;
-        def.allowSleep = false;
+        def.allowSleep = true;
         def.fixedRotation = false;
-        def.linearDamping = 0.5f;
+        def.linearDamping = 0;
         body = world.createBody(def);
-        float scale = 0.25f + (float)Math.random() * 2;
-        float x = (float)Math.random() * WorldSpace.WIDTH;
-        float y = (float)Math.random() * WorldSpace.HEIGHT;
-        setCenter(x, y);
-        setScale(scale);
-        PolygonShape poly = new PolygonShape();
-        poly.setAsBox(scale*getWidth()/2, scale*getHeight()/2);
-        fixture = body.createFixture(poly, 1);
+        scale = MIN_SIZE + (float)Math.random() * 2;
+        float x = (float)Math.random() * GameScreen.WIDTH;
+        float y = (float)Math.random() * GameScreen.HEIGHT;
+        CircleShape circle = new CircleShape();
+        circle.setRadius(0.5f*scale);
+        fixture = body.createFixture(circle, DENSITY);
         body.setTransform(x, y, 0);
-        poly.dispose();
+        circle.dispose();
         angleMove = 180;
         count++;
         shield = SHIELD * level;
@@ -58,7 +56,7 @@ public class  Asteroid extends MySprite {
         //create();
     }
 
-    public void create() {
+    //public void create() {
         //float scale = 0.25f + (float)Math.random() * 2;
         //setScale(scale);
         //hp = 100f * scale;
@@ -71,13 +69,12 @@ public class  Asteroid extends MySprite {
 
         //poly.setAsBox(getWidth()/2, getHeight()/2);
 
-    }
+    //}
 
     public boolean destroy() {
         if(!active) return false;
-        active = false;
         count--;
-        body.destroyFixture(fixture);
+        super.destroy();
         System.out.println("Астеройдов: " + count);
         return count == 0;
     }
@@ -90,13 +87,13 @@ public class  Asteroid extends MySprite {
     }
 
     public float getDamage() {
-        return (float)DAMAGE * getScaleX();
+
+        return 0;//(float)DAMAGE *scale;
     }
 
     public void update() {
-        move();
-        if (getX() < - getWidth())
-            create();
+        if (getX() < - fixture.getShape().getRadius())
+            destroy();
     }
     
     

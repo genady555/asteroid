@@ -1,33 +1,31 @@
 package com.mygdx.model;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.GdxGame;
+import com.mygdx.view.GameScreen;
 
 /**
  * Created by Rrr on 15.02.2017.
  */
 public class WorldSpace {
 
-    final static public int WIDTH = 128; //размер в метрах
-    final static public int HEIGHT = 72;
-
     final int ASTEROIDS = 10;
     int level;
 
     World  physics;
-    GdxGame game;
+    GameScreen screen;
     Background background;
     Hero hero;
     Asteroid[] asteroids;
 
 
-    public WorldSpace(GdxGame game) {
-        this.game = game;
-        MySprite.setBatch(game.getBatch());
-        physics = new World(new Vector2(0, 0), false);
+    public WorldSpace(GameScreen screen) {
+        this.screen = screen;
+        physics = new World(new Vector2(0, 0), true);
         background = new Background();
         hero = new Hero(physics);
     }
@@ -53,19 +51,19 @@ public class WorldSpace {
         hero.update();
         for (Asteroid asteroid : asteroids) asteroid.update();
         physics.step(1f/60f, 1, 1);
-        check();
+        //check();
     }
 
     void input() {
-        if(game.getInput().isAccelerate())
+        if(screen.getInput().isAccelerate())
             hero.accelerate();
-        if(game.getInput().isBrake())
+        if(screen.getInput().isBrake())
             hero.brake();
-        if(game.getInput().isLeft())
+        if(screen.getInput().isLeft())
             hero.turnLeft();
-        if(game.getInput().isRight())
+        if(screen.getInput().isRight())
             hero.turnRight();
-        if(game.getInput().isFire())
+        if(screen.getInput().isFire())
             hero.fire();
     }
 
@@ -109,5 +107,13 @@ public class WorldSpace {
 
     public World getPhysics() { return physics; }
 
+    public void dispose() {
+        physics.dispose();
+    }
+
+    public void pause() {
+    }
+
+    public void resume() {}
 
 }

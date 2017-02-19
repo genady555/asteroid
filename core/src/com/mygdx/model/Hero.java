@@ -8,9 +8,12 @@ package com.mygdx.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GdxGame;
+import com.mygdx.view.GameScreen;
 
 import javax.sound.midi.Soundbank;
 
@@ -19,43 +22,36 @@ import javax.sound.midi.Soundbank;
  *
  * @author Rrr
  */
-public class Hero extends MySprite{
+public class Hero extends Subject {
 
     final static Texture texture = new Texture("ship80x60.tga");;
+    final float WIDTH = 1.2f;
+    final float HEIGHT = 0.8f;
     final int BULLETS_COUNT = 100;
-    final float DENSITY = 1f;
+    final float DENSITY = 100f;
 
     Bullet[] bullets = new Bullet[BULLETS_COUNT];
-
     private float maxSpeed;
     private float drive, rotate;
     private float rateFire;
     private long timeFire, pauseFire;
     private float hp;
     private int shield = 10;
-    private Body body;
-    private Fixture fixture;
 
 
 //--------------------------------------------------------------------------------
 
     public Hero(World world) {
-        super(texture);
-        BodyDef def = new BodyDef();
-        def.type = BodyDef.BodyType.DynamicBody;
-        def.active = true;
-        def.allowSleep = false;
-        def.fixedRotation = false;
-        def.linearDamping = 0.5f;
-        body = world.createBody(def);
+        super(world, texture);
         PolygonShape poly = new PolygonShape();
-        poly.setAsBox(getWidth()/2, getHeight()/2);
-        fixture = body.createFixture(poly, DENSITY);
-        poly.dispose();
+        poly.setAsBox(0.8f, 0.5f);
+        createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
+        body.setLinearDamping(0.5f);
+        body.setAngularDamping(0.5f);
         drive = 100f;
-        rotate = 2.5f;
-        maxSpeed = drive*5;
-        rateFire = 3;
+        rotate = 2.5f * (float)(Math.PI/180); //в радианах
+        maxSpeed = drive/5;
+        rateFire = 5;
         pauseFire = (long)(1000f / rateFire);
         timeFire = System.currentTimeMillis();
         for (int i = 0; i < bullets.length; i++)
@@ -64,16 +60,9 @@ public class Hero extends MySprite{
 
     public Body getBody() { return  body; }
 
-    public float getSpeed() {
-        return body.getLinearVelocity().len();
-    }
-
     public void start() {
-        body.setLinearVelocity(0, 0);
-        body.setTransform(5, 35,0);
-        speed = 0;
-        accel = 0;
-        angleMove = 0;
+        setSpeed(0, 0);
+        setPosition(1, 6, 0);
         hp = 100f;
         for (Bullet bullet : bullets) bullet.destroy();
     }
@@ -83,35 +72,47 @@ public class Hero extends MySprite{
     public void update(){
         float x = body.getPosition().x;
         float y = body.getPosition().y;
-        if (x < -getWidth())
-            x = WorldSpace.WIDTH;
-        if (x > WorldSpace.WIDTH)
+        boolean flag = false;
+        if (x < -getWidth()) {
+            flag = true;
+            x = GameScreen.WIDTH;
+        }
+        if (x > GameScreen.WIDTH) {
             x = -getWidth();
-        if (y < -getHeight())
-            y = WorldSpace.HEIGHT;
-        if (y > WorldSpace.HEIGHT)
+            flag = true;
+        }
+        if (y < -getHeight()) {
+            y = GameScreen.HEIGHT;
+            flag = true;
+        }
+        if (y > GameScreen.HEIGHT) {
             y = -getHeight();
-        body.setTransform(x, y, (float)Math.toRadians(angleMove));
-        setPosition(x, y);
+            flag = true;
+        }
+        if(flag) body.setTransform(x, y, body.getAngle());
         for (Bullet bullet : bullets)
             bullet.update();
     }
 
     public void accelerate() {
-        float ax = drive * (float)Math.cos(Math.toRadians(angleMove));
-        float ay = drive * (float)Math.sin(Math.toRadians(angleMove));
-        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, false);
+        float ax = drive * (float)Math.cos(body.getAngle());
+        float ay = drive * (float)Math.sin(body.getAngle());
+        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, true);
     }
 
     public void brake() {
-        float ax = drive * (float)Math.cos(Math.toRadians(angleMove - 180));
-        float ay = drive * (float)Math.sin(Math.toRadians(angleMove - 180));
-        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, false);
+        float ax = drive * (float)Math.cos(body.getAngle() - Math.PI);
+        float ay = drive * (float)Math.sin(body.getAngle() - Math.PI);
+        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, true);
     }
 
-    public void turnLeft() { angleMove += rotate; }
+    public void turnLeft() {
+        body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() + rotate);
+    }
 
-    public void turnRight() { angleMove -= rotate; }
+    public void turnRight() {
+        body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() - rotate);
+    }
 
     public void fire() {
         long time = System.currentTimeMillis();
@@ -119,13 +120,17 @@ public class Hero extends MySprite{
         if(dt >= pauseFire){
             for (Bullet bullet : bullets) {
                 if (bullet.isActive()) continue;
-                bullet.create(body.getPosition().x, body.getPosition().y, body.getLinearVelocity().len(), angleMove);
+                bullet.create(body.getPosition().x, body.getPosition().y, getSpeed(), getTurn());
                 break;
             }
             timeFire = time;
         }
 
     }
+
+    public float getWidth() { return WIDTH; }
+
+    public float getHeight() { return HEIGHT; }
 
     public void showHp() {
         System.out.println("Здоровье: " + (int)hp);
@@ -138,11 +143,9 @@ public class Hero extends MySprite{
         return (int)hp <= 0;
     }
 
-    public void render() {
-        setRotation(angleMove);
-        setCenter(body.getPosition().x, body.getPosition().y);
-        super.render();
-        for (Bullet bullet : bullets) bullet.render();
+    public void render(SpriteBatch batch) {
+        super.render(batch);
+        for (Bullet bullet : bullets) bullet.render(batch);
     }
 
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.mygdx.view.GameScreen;
 
 
 /**
@@ -24,32 +25,17 @@ class MySprite extends Sprite{
     protected boolean active = true;
     protected float angleMove;
     protected float accel;
-    protected float ax, ay;
-    protected Texture texture;
-
-    public static void setBatch(SpriteBatch batch){
-        if(MySprite.batch == null)
-            MySprite.batch = batch;
-        else System.out.println("SpriteBatch уже был установлен!");
-    }
+    protected float ppuX, ppuY;
 
 //--------------------------------------------------------------------
 
-    public MySprite() { super(); }
-
     public MySprite(Texture texture){
         super(texture);
-        ax = Gdx.graphics.getWidth()/WorldSpace.WIDTH;
-        ay = Gdx.graphics.getHeight()/WorldSpace.HEIGHT;
-        setSize(getWidth()/ax, getHeight()/ay);
+        ppuX = Gdx.graphics.getWidth()/ GameScreen.WIDTH;
+        ppuY = Gdx.graphics.getHeight()/GameScreen.HEIGHT;
+        setSize(getWidth()/ppuX, getHeight()/ppuY);
         setOriginCenter();
     }
-    
-    //public MySprite(String filename) {
-    //    super();
-    //    Texture texture = new Texture(filename);
-    //    setTexture(texture);
-    //}
 
     public boolean isActive() { return  active; }
 
@@ -64,14 +50,23 @@ class MySprite extends Sprite{
         speed = speed + accel * deltaTime;
         x = x + speed * deltaTime * (float)Math.cos(Math.toRadians(angleMove));
         y = y + speed * deltaTime * (float)Math.sin(Math.toRadians(angleMove));
-        setX(x);
-        setY(y);
+        setPosition(x, y);
     }
 
-    public void render(){
+    public void moveTo(float x, float y) {
+        float dx = x - getX();
+        float dy = y - getY();
+        if(dy == 0) angleMove = 0;
+        else angleMove = (float)(Math.toDegrees(Math.atan(dx/dy)));
+        move();
+    }
+
+    public void render(SpriteBatch batch){
         if(active) draw(batch);
-            //batch.draw(texture, x, y, width/2, height/2,
-            //        width, height, size, size, angleRotate, 0, 0, width, height, false, false);
+    }
+
+    public void dispose() {
+        getTexture().dispose();
     }
        
 }

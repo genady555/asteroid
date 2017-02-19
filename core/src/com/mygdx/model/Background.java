@@ -6,7 +6,9 @@
 package com.mygdx.model;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.GdxGame;
+import com.mygdx.view.GameScreen;
 
 /**
  *
@@ -14,7 +16,7 @@ import com.mygdx.game.GdxGame;
  */
 public class Background extends MySprite {
     
-    private final int STARS_COUNT = 500;
+    private final int STARS_COUNT = 300;
     private Star[] stars;
     static Texture texture = new Texture("staticback.jpg");;
     
@@ -26,10 +28,10 @@ public class Background extends MySprite {
     }
     
     @Override
-    public void render() {
-        super.render();
+    public void render(SpriteBatch batch) {
+        super.render(batch);
         for (int i = 0; i < STARS_COUNT; i++)
-            stars[i].render();
+            stars[i].render(batch);
     }
     
     public void update(){
@@ -43,7 +45,7 @@ public class Background extends MySprite {
 //------------------------------------------------------------------------------------
     class Star extends MySprite {
 
-        final static float SPEED = 100f;
+        final static float SPEED = 2f;
         final static Texture texture = new Texture("star12.tga");;
 
         public Star() {
@@ -51,18 +53,18 @@ public class Background extends MySprite {
             speed = (float)Math.random() * SPEED;
             setScale(speed/SPEED);
             angleMove = 180;
-            setX((float)Math.random() * WorldSpace.WIDTH);
-            setY((float)Math.random() * WorldSpace.HEIGHT);
+            setX((float)Math.random() * GameScreen.WIDTH);
+            setY((float)Math.random() * GameScreen.HEIGHT);
         }
         
         public void update(){
             move();
             if (getX() < 0) {
-                setX(WorldSpace.WIDTH);
-                setY((float)Math.random() * WorldSpace.HEIGHT);
-            } else if(getX() > WorldSpace.WIDTH){
+                setX(GameScreen.WIDTH);
+                setY((float)Math.random() * GameScreen.HEIGHT);
+            } else if(getX() > GameScreen.WIDTH){
                 setX(0);
-                setY((float)Math.random() * WorldSpace.HEIGHT);
+                setY((float)Math.random() * GameScreen.HEIGHT);
             }
         }
         

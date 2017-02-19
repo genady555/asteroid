@@ -34,7 +34,7 @@ public class InputController implements InputProcessor {
                 right = true;
                 break;
             }
-            case Input.Keys.Q: {
+            case Input.Keys.SPACE: {
                 fire = true;
                 break;
             }
@@ -62,7 +62,7 @@ public class InputController implements InputProcessor {
                 right = false;
                 break;
             }
-            case Input.Keys.Q: {
+            case Input.Keys.SPACE: {
                 fire = false;
                 break;
             }

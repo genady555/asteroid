@@ -7,6 +7,7 @@ package com.mygdx.model;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.GdxGame;
+import com.mygdx.view.GameScreen;
 
 /**
  *
@@ -14,7 +15,7 @@ import com.mygdx.game.GdxGame;
  */
 public class Bullet extends MySprite {
 
-    final static float SPEED = 500f;
+    final static float SPEED = 5f;
     final static float DAMAGE = 100f;
     final static Texture texture = new Texture("bullet20.png");
 
@@ -37,7 +38,8 @@ public class Bullet extends MySprite {
         active = true;
         this.speed = SPEED + speed;
         count++;
-        //System.out.println("Пуля+ " + count);
+        System.out.println("Скорость пули: " + this.speed);
+        System.out.println("Угол: " + angle);
     }
 
     public void destroy() {
@@ -54,7 +56,7 @@ public class Bullet extends MySprite {
     public void update(){
         if(!active) return;
         move();
-        if (getX() > WorldSpace.WIDTH || getY() < -getWidth() || getY() < -getHeight() || getY() > WorldSpace.HEIGHT)
+        if (getX() > GameScreen.WIDTH || getY() < -getWidth() || getY() < -getHeight() || getY() > GameScreen.HEIGHT)
             destroy();
      }
 }

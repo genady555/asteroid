@@ -17,9 +17,13 @@ import com.mygdx.model.WorldSpace;
  */
 public class GameScreen implements Screen{
 
-    final static public int WIDTH = 22; //размер экрана в юнитах
-    final static public int HEIGHT = 12;
+    final static public float UNIT_WIDTH = 60f; //размер юнита в пикселях
+    final static public float UNIT_HEIGHT = 60f;
+    final static public float WIDTH_MIN = 10;
+    final static public float HEIGHT_MIN = 5;
     final public GdxGame game;
+    public static float WIDTH = 22f; //размер экрана в юнитах
+    public static float HEIGHT = 12f;
 
     private WorldSpace world;
     private InputController input;
@@ -29,8 +33,16 @@ public class GameScreen implements Screen{
         this.game = game;
         input = new InputController();
         Gdx.input.setInputProcessor(input);
+        setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         world = new WorldSpace(this);
         renderer = new WorldRenderer(this, world);
+    }
+
+    private void setSize(int w, int h){
+        WIDTH = w/UNIT_WIDTH;
+        HEIGHT = h/UNIT_HEIGHT;
+        if(WIDTH < WIDTH_MIN) WIDTH = WIDTH_MIN;
+        if(HEIGHT < HEIGHT_MIN) HEIGHT = HEIGHT_MIN;
     }
 
     public InputController getInput() { return input; }
@@ -47,8 +59,11 @@ public class GameScreen implements Screen{
     }
 
     @Override
-    public void resize(int width, int height) {
-
+    public void resize(int w, int h) {
+        setSize(w, h);
+        renderer.camera.setToOrtho(false, WIDTH, HEIGHT);
+        //renderer.camera.position.set(WIDTH/2, HEIGHT/2, 0);
+        renderer.camera.update();
     }
 
     @Override

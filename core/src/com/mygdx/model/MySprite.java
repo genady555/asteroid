@@ -25,15 +25,12 @@ class MySprite extends Sprite{
     protected boolean active = true;
     protected float angleMove;
     protected float accel;
-    protected float ppuX, ppuY;
 
 //--------------------------------------------------------------------
 
     public MySprite(Texture texture){
         super(texture);
-        ppuX = Gdx.graphics.getWidth()/ GameScreen.WIDTH;
-        ppuY = Gdx.graphics.getHeight()/GameScreen.HEIGHT;
-        setSize(getWidth()/ppuX, getHeight()/ppuY);
+        setSize(getWidth()/GameScreen.UNIT_WIDTH, getHeight()/GameScreen.UNIT_HEIGHT);
         setOriginCenter();
     }
 

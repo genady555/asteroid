@@ -18,7 +18,7 @@ public class Background extends MySprite {
     
     private final int STARS_COUNT = 300;
     private Star[] stars;
-    static Texture texture = new Texture("staticback.jpg");;
+    static Texture texture = new Texture("bg.png");;
     
     public Background() {
         super(texture);
@@ -29,7 +29,7 @@ public class Background extends MySprite {
     
     @Override
     public void render(SpriteBatch batch) {
-        super.render(batch);
+        //super.render(batch);
         for (int i = 0; i < STARS_COUNT; i++)
             stars[i].render(batch);
     }
@@ -45,15 +45,19 @@ public class Background extends MySprite {
 //------------------------------------------------------------------------------------
     class Star extends MySprite {
 
-        final static float SPEED = 2f;
+        final static float SPEED = 3f;
         final static Texture texture = new Texture("star12.tga");;
 
         public Star() {
             super(texture);
-            speed = (float)Math.random() * SPEED;
-            setScale(speed/SPEED);
             angleMove = 180;
             setX((float)Math.random() * GameScreen.WIDTH);
+            create();
+        }
+
+        void create() {
+            speed = (float)Math.random() * SPEED;
+            setScale(speed/SPEED);
             setY((float)Math.random() * GameScreen.HEIGHT);
         }
         
@@ -61,10 +65,7 @@ public class Background extends MySprite {
             move();
             if (getX() < 0) {
                 setX(GameScreen.WIDTH);
-                setY((float)Math.random() * GameScreen.HEIGHT);
-            } else if(getX() > GameScreen.WIDTH){
-                setX(0);
-                setY((float)Math.random() * GameScreen.HEIGHT);
+                create();
             }
         }
         

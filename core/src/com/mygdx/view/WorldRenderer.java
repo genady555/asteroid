@@ -18,7 +18,7 @@ public class WorldRenderer {
     final WorldSpace world;
 
     private SpriteBatch batch;
-    private OrthographicCamera camera;
+    public OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
 
     private long lastTime = System.nanoTime();
@@ -31,8 +31,8 @@ public class WorldRenderer {
         batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, screen.WIDTH, screen.HEIGHT);
-        camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
+        //camera.setToOrtho(false, screen.WIDTH, screen.HEIGHT);
+        //camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
     }
 
     public void render() {

@@ -47,7 +47,6 @@ public class Subject {
         bDef.position.set(x, y);
         body = world.createBody(bDef);
         fixture = body.createFixture(shape, density);
-        fixture.setUserData(sprite);
         sprite.setCenter(x, y);
     }
 

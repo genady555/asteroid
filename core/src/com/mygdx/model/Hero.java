@@ -25,8 +25,6 @@ import javax.sound.midi.Soundbank;
 public class Hero extends Subject {
 
     final static Texture texture = new Texture("ship80x60.tga");;
-    final float WIDTH = 1.2f;
-    final float HEIGHT = 0.8f;
     final int BULLETS_COUNT = 100;
     final float DENSITY = 100f;
 
@@ -44,9 +42,10 @@ public class Hero extends Subject {
     public Hero(World world) {
         super(world, texture);
         PolygonShape poly = new PolygonShape();
-        poly.setAsBox(0.8f, 0.5f);
+        poly.setAsBox(0.8f*(sprite.getWidth()/2), 0.8f*(sprite.getHeight()/2));
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
-        body.setLinearDamping(0.1f);
+        //System.out.println(fixture.getShape());
+        body.setLinearDamping(1f);
         body.setAngularDamping(2f);
         drive = 500f;
         rotate = 2.5f * (float)(Math.PI/180); //в радианах
@@ -132,9 +131,9 @@ public class Hero extends Subject {
 
     }
 
-    public float getWidth() { return WIDTH; }
+    public float getWidth() { return sprite.getWidth(); }
 
-    public float getHeight() { return HEIGHT; }
+    public float getHeight() { return sprite.getHeight(); }
 
     public void showHp() {
         System.out.println("Здоровье: " + (int)hp);

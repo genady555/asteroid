@@ -25,7 +25,7 @@ public class WorldSpace {
 
     public WorldSpace(GameScreen screen) {
         this.screen = screen;
-        physics = new World(new Vector2(0, 0), true);
+        physics = new World(new Vector2(-1f, 0), true);
         background = new Background();
         hero = new Hero(physics);
     }

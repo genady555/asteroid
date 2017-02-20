@@ -17,7 +17,7 @@ import com.mygdx.model.WorldSpace;
  */
 public class GameScreen implements Screen{
 
-    final static public int WIDTH = 20; //размер экрана в юнитах
+    final static public int WIDTH = 22; //размер экрана в юнитах
     final static public int HEIGHT = 12;
     final public GdxGame game;
 

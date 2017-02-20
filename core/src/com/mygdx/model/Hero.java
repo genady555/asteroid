@@ -46,9 +46,9 @@ public class Hero extends Subject {
         PolygonShape poly = new PolygonShape();
         poly.setAsBox(0.8f, 0.5f);
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
-        body.setLinearDamping(0.5f);
-        body.setAngularDamping(0.5f);
-        drive = 100f;
+        body.setLinearDamping(0.1f);
+        body.setAngularDamping(2f);
+        drive = 500f;
         rotate = 2.5f * (float)(Math.PI/180); //в радианах
         maxSpeed = drive/5;
         rateFire = 5;
@@ -97,21 +97,25 @@ public class Hero extends Subject {
     public void accelerate() {
         float ax = drive * (float)Math.cos(body.getAngle());
         float ay = drive * (float)Math.sin(body.getAngle());
-        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, true);
+        body.applyForceToCenter(ax, ay, true);
     }
 
     public void brake() {
         float ax = drive * (float)Math.cos(body.getAngle() - Math.PI);
         float ay = drive * (float)Math.sin(body.getAngle() - Math.PI);
-        body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, true);
+        //body.applyLinearImpulse(ax, ay, body.getPosition().x, body.getPosition().y, true);
+        body.applyForceToCenter(ax, ay, true);
     }
 
     public void turnLeft() {
-        body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() + rotate);
+        //body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() + rotate);
+        body.applyAngularImpulse(10f, true);
     }
 
     public void turnRight() {
-        body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() - rotate);
+
+        //body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() - rotate);
+        body.applyAngularImpulse(-10f, true);
     }
 
     public void fire() {

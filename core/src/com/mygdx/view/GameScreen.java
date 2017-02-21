@@ -63,6 +63,7 @@ public class GameScreen implements Screen{
         renderer.camera.setToOrtho(false, WIDTH, HEIGHT);
         //renderer.camera.position.set(WIDTH/2, HEIGHT/2, 0);
         renderer.camera.update();
+        world.getBackground().resize();
     }
 
     @Override

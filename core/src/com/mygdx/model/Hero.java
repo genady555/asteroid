@@ -26,7 +26,7 @@ public class Hero extends Subject {
 
     final static Texture texture = new Texture("ship80x60.tga");;
     final int BULLETS_COUNT = 100;
-    final float DENSITY = 100f;
+    final float DENSITY = 1000f;
 
     Bullet[] bullets = new Bullet[BULLETS_COUNT];
     private float maxSpeed;
@@ -45,9 +45,9 @@ public class Hero extends Subject {
         poly.setAsBox(0.7f*getWidth()/2, 0.7f*getHeight()/2);
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
         //System.out.println(fixture.getShape());
-        body.setLinearDamping(1f);
+        body.setLinearDamping(0.5f);
         body.setAngularDamping(2f);
-        drive = 500f;
+        drive = 3000f;
         rotate = 2.5f * (float)(Math.PI/180); //в радианах
         maxSpeed = drive/5;
         rateFire = 5;
@@ -55,6 +55,7 @@ public class Hero extends Subject {
         timeFire = System.currentTimeMillis();
         for (int i = 0; i < bullets.length; i++)
             bullets[i] = new Bullet();
+        System.out.println("Моя масса: " + body.getMass());
     }
 
     public Body getBody() { return  body; }

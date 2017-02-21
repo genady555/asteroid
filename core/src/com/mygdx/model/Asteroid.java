@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.view.GameScreen;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -20,9 +21,10 @@ public class  Asteroid extends Subject {
     final static int SHIELD = 10;
 
     final static int DAMAGE = 25;
-    final static float DENSITY = 1000;
+    final static float DENSITY = 1000f;
+    final static float IMPULSE = 500f;
     final static float ACCEL = 5f;
-    final static float SPEED = 15f;
+    final static float SPEED = 2.5f;
     final static float MIN_SCALE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
 
@@ -32,10 +34,11 @@ public class  Asteroid extends Subject {
     private float hp;
     private int shield;
     private int level;
+    private CircleShape circle;
 
     public Asteroid(int level, World world) {
         super(world, texture);
-        if(RADIUS == 0) RADIUS = sprite.getWidth()/2f;
+        if(RADIUS == 0) RADIUS = 0.8f*sprite.getWidth()/2f;
         this.level = level;
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
@@ -44,31 +47,41 @@ public class  Asteroid extends Subject {
         def.fixedRotation = false;
         def.linearDamping = 0;
         body = world.createBody(def);
-        CircleShape circle = new CircleShape();
-        fixture = body.createFixture(circle, DENSITY);
-        circle.dispose();
+        circle = new CircleShape();
         angleMove = 180;
-        count++;
-        create();
+        //count++;
+        active = false;
+        //create();
     }
 
-    public void setScale(float scale) {
-        fixture.getShape().setRadius(RADIUS*scale);
-        sprite.setScale(scale);
+    public void createFixture(float radius) {
+        circle.setRadius(radius);
+        fixture = body.createFixture(circle, DENSITY);
     }
 
 
     public void create() {
-        float scale = MIN_SCALE + (float)Math.random() * 2;
-        float x = (float)Math.random() * GameScreen.WIDTH;
+        active = true;
+        float scale = MIN_SCALE + (float)Math.random() * 2f;
+        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * (float)count/5);
         float y = (float)Math.random() * GameScreen.HEIGHT;
-        setScale(scale);
+        float speed = SPEED + (float)Math.random() * SPEED*level;
+        if(Math.random() > 0.9)
+            speed = SPEED * level * 3f;
+        sprite.setScale(scale);
+        createFixture(scale*RADIUS);
         setPosition(x, y);
+        body.setLinearVelocity(-speed, 0);
+        int sign;
+        if(Math.random() > 0.5) sign = 1;
+        else sign = -1;
+        body.setAngularVelocity(speed*sign);
         hp = 100f * scale;
         shield = SHIELD * level;
         if(shield > 90) shield = 90;
-        //if(Math.random() > 0.9)
-        //    speed = SPEED * level * 2f;
+        System.out.println("Масса астеройда: " + body.getMass());
+        System.out.println("Размер: " + getSize());
+
 
     }
 
@@ -92,9 +105,18 @@ public class  Asteroid extends Subject {
         return 0;//(float)DAMAGE *scale;
     }
 
-    public void update() {
-        if (getX() < - fixture.getShape().getRadius())
-            destroy();
+    public float getSize() {
+        return fixture.getShape().getRadius();
+    }
+
+    public boolean update() {
+        if(!active) return false;
+        if (getX() < - getSize() || getY() < -getSize() || getY() > GameScreen.HEIGHT + getSize()) {
+            body.destroyFixture(fixture);
+            create();
+            return true;
+        }
+        return false;
     }
     
     

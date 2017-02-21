@@ -21,7 +21,7 @@ public class WorldRenderer {
     public OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
 
-    private long lastTime = System.nanoTime();
+    private long lastTime;
     private long counterTime;
 
 
@@ -31,6 +31,7 @@ public class WorldRenderer {
         batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
+        lastTime = System.currentTimeMillis();
         //camera.setToOrtho(false, screen.WIDTH, screen.HEIGHT);
         //camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
     }
@@ -45,8 +46,8 @@ public class WorldRenderer {
         for (Asteroid asteroid : world.getAsteroids())
             asteroid.render(batch);
         batch.end();
-        debugRenderer.render(world.getPhysics(), camera.combined);
-        //debug(1000);
+        //debugRenderer.render(world.getPhysics(), camera.combined);
+        debug(1000);
     }
 
     public void debug(float time) {
@@ -57,7 +58,7 @@ public class WorldRenderer {
         if(counterTime >= time) {
             counterTime = 0;
             //System.out.println(world.getHero().getBody().getLinearVelocity());
-            //System.out.println("FPS: " + fps + " " + Gdx.graphics.getFramesPerSecond());
+            System.out.println("FPS: " + Gdx.graphics.getFramesPerSecond());
         }
     }
 

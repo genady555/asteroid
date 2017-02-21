@@ -16,26 +16,31 @@ import com.mygdx.view.GameScreen;
  */
 public class Background extends MySprite {
     
-    private final int STARS_COUNT = 300;
+    private final float STARS_DENSITY = 2;
     private Star[] stars;
     static Texture texture = new Texture("bg.png");;
+    private int starsCount;
     
     public Background() {
         super(texture);
-        stars = new Star[STARS_COUNT];
-        for (int i = 0; i < STARS_COUNT; i++)
+    }
+
+    public void resize() {
+        starsCount = (int)(STARS_DENSITY*GameScreen.WIDTH*GameScreen.HEIGHT);
+        stars = new Star[starsCount];
+        for (int i = 0; i < starsCount; i++)
             stars[i] = new Star();
     }
     
     @Override
     public void render(SpriteBatch batch) {
         //super.render(batch);
-        for (int i = 0; i < STARS_COUNT; i++)
+        for (int i = 0; i < starsCount; i++)
             stars[i].render(batch);
     }
     
     public void update(){
-        for (int i = 0; i < STARS_COUNT; i++) {
+        for (int i = 0; i < starsCount; i++) {
             stars[i].update();
         }
     }

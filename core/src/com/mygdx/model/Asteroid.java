@@ -18,14 +18,16 @@ import java.awt.*;
 public class  Asteroid extends Subject {
 
     final static int SHIELD = 10;
+
     final static int DAMAGE = 25;
     final static float DENSITY = 1000;
     final static float ACCEL = 5f;
     final static float SPEED = 15f;
-    final static float MIN_SIZE = 0.25f;
+    final static float MIN_SCALE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
 
     static int count;
+    static float RADIUS;
 
     private float hp;
     private int shield;
@@ -33,6 +35,7 @@ public class  Asteroid extends Subject {
 
     public Asteroid(int level, World world) {
         super(world, texture);
+        if(RADIUS == 0) RADIUS = sprite.getWidth()/2f;
         this.level = level;
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
@@ -41,35 +44,33 @@ public class  Asteroid extends Subject {
         def.fixedRotation = false;
         def.linearDamping = 0;
         body = world.createBody(def);
-        scale = MIN_SIZE + (float)Math.random() * 2;
-        float x = (float)Math.random() * GameScreen.WIDTH;
-        float y = (float)Math.random() * GameScreen.HEIGHT;
         CircleShape circle = new CircleShape();
-        circle.setRadius(0.5f*scale);
         fixture = body.createFixture(circle, DENSITY);
-        body.setTransform(x, y, 0);
         circle.dispose();
         angleMove = 180;
         count++;
-        shield = SHIELD * level;
-        if(shield > 90) shield = 90;
-        //create();
+        create();
     }
 
-    //public void create() {
-        //float scale = 0.25f + (float)Math.random() * 2;
-        //setScale(scale);
-        //hp = 100f * scale;
-        //accel = ACCEL + (float)Math.random() * ACCEL * level;
-        //speed = SPEED + (float)Math.random() * SPEED * level / 5;
+    public void setScale(float scale) {
+        fixture.getShape().setRadius(RADIUS*scale);
+        sprite.setScale(scale);
+    }
+
+
+    public void create() {
+        float scale = MIN_SCALE + (float)Math.random() * 2;
+        float x = (float)Math.random() * GameScreen.WIDTH;
+        float y = (float)Math.random() * GameScreen.HEIGHT;
+        setScale(scale);
+        setPosition(x, y);
+        hp = 100f * scale;
+        shield = SHIELD * level;
+        if(shield > 90) shield = 90;
         //if(Math.random() > 0.9)
         //    speed = SPEED * level * 2f;
-        //float angle = (float)Math.random() * 360;
 
-
-        //poly.setAsBox(getWidth()/2, getHeight()/2);
-
-    //}
+    }
 
     public boolean destroy() {
         if(!active) return false;

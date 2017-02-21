@@ -42,7 +42,7 @@ public class Hero extends Subject {
     public Hero(World world) {
         super(world, texture);
         PolygonShape poly = new PolygonShape();
-        poly.setAsBox(0.8f*(sprite.getWidth()/2), 0.8f*(sprite.getHeight()/2));
+        poly.setAsBox(0.7f*getWidth()/2, 0.7f*getHeight()/2);
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
         //System.out.println(fixture.getShape());
         body.setLinearDamping(1f);

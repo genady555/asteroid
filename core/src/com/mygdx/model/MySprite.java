@@ -30,7 +30,7 @@ class MySprite extends Sprite{
 
     public MySprite(Texture texture){
         super(texture);
-        setSize(getWidth()/GameScreen.UNIT_WIDTH, getHeight()/GameScreen.UNIT_HEIGHT);
+        setSize(getWidth()/GameScreen.UNIT_SIZE, getHeight()/GameScreen.UNIT_SIZE);
         setOriginCenter();
     }
 

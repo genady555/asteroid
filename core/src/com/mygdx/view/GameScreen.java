@@ -17,8 +17,7 @@ import com.mygdx.model.WorldSpace;
  */
 public class GameScreen implements Screen{
 
-    final static public float UNIT_WIDTH = 60f; //размер юнита в пикселях
-    final static public float UNIT_HEIGHT = 60f;
+    final static public float UNIT_SIZE = 60f; //размер юнита в пикселях
     final static public float WIDTH_MIN = 10;
     final static public float HEIGHT_MIN = 5;
     final public GdxGame game;
@@ -39,8 +38,8 @@ public class GameScreen implements Screen{
     }
 
     private void setSize(int w, int h){
-        WIDTH = w/UNIT_WIDTH;
-        HEIGHT = h/UNIT_HEIGHT;
+        WIDTH = w/UNIT_SIZE;
+        HEIGHT = h/UNIT_SIZE;
         if(WIDTH < WIDTH_MIN) WIDTH = WIDTH_MIN;
         if(HEIGHT < HEIGHT_MIN) HEIGHT = HEIGHT_MIN;
     }

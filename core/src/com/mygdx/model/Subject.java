@@ -17,10 +17,9 @@ public class Subject {
 
     protected MySprite sprite;
     protected boolean active = true;
-    protected Body body;;
+    protected Body body;
     protected World world;
     protected Fixture fixture;
-    protected float scale = 1;
     protected float angleMove;
 
     public Subject(World world) {
@@ -38,16 +37,25 @@ public class Subject {
         sprite = new MySprite(new Texture(filename));
     }
 
+    public Subject(World world, Texture texture, Shape shape, BodyDef.BodyType type, float density) {
+        this(world, texture);
+        createBody(shape, type, density);
+    }
 
-    protected void createBody(Shape shape, BodyDef.BodyType type, float density, float x, float y) {
+
+    protected void createBody(Shape shape, BodyDef.BodyType type, float density) {
         BodyDef bDef = new BodyDef();
         bDef.type = type;
         bDef.active = active;
         bDef.fixedRotation = false;
-        bDef.position.set(x, y);
         body = world.createBody(bDef);
         fixture = body.createFixture(shape, density);
-        sprite.setCenter(x, y);
+    }
+
+    public Vector2 getPosition() { return body.getPosition(); }
+
+    public void setPosition(Vector2 position, float angle) {
+        body.setTransform(position.x, position.y, angle);
     }
 
     public void setPosition(float x, float y) {
@@ -62,12 +70,20 @@ public class Subject {
         body.setLinearVelocity(vx, vy);
     }
 
-    public float getSpeed() {
+    public void setSpeed(Vector2 speed) { body.setLinearVelocity(speed); }
+
+    public float getSpeedLenght() {
         return body.getLinearVelocity().len();
     }
 
+    public Vector2 getSpeed() { return body.getLinearVelocity(); }
+
+    public float getWidth() { return sprite.getWidth(); }
+
+    public float getHeight() { return sprite.getHeight(); }
+
     public void setTurn(float angle) {
-        body.setTransform(body.getPosition(), (float)Math.toRadians(angle));
+        body.setTransform(getPosition(), angle);
     }
 
     public float getX() {
@@ -79,20 +95,19 @@ public class Subject {
     }
 
     public float getTurn(){
-        return (float)Math.toDegrees(body.getAngle());
+        return body.getAngle();
     }
 
     public void render(SpriteBatch batch) {
         if(!active) return;
         sprite.setCenter(body.getPosition().x, body.getPosition().y);
-        sprite.setRotation(getTurn());
+        sprite.setRotation((float)Math.toDegrees(getTurn()));
         sprite.draw(batch);
     }
 
     public boolean destroy() {
-        active = false;
+        setActive(false);
         count--;
-        body.setActive(false);
         world.destroyBody(body);
         return count == 0;
     }

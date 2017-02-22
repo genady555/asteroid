@@ -22,8 +22,6 @@ public class  Asteroid extends Subject {
 
     final static int DAMAGE = 25;
     final static float DENSITY = 1000f;
-    final static float IMPULSE = 500f;
-    final static float ACCEL = 5f;
     final static float SPEED = 2.5f;
     final static float MIN_SCALE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
@@ -32,6 +30,7 @@ public class  Asteroid extends Subject {
     static float RADIUS;
 
     private float hp;
+    private float scale;
     private int shield;
     private int level;
     private CircleShape circle;
@@ -42,15 +41,12 @@ public class  Asteroid extends Subject {
         this.level = level;
         BodyDef def = new BodyDef();
         def.type = BodyDef.BodyType.DynamicBody;
-        def.active = true;
         def.allowSleep = true;
         def.fixedRotation = false;
         def.linearDamping = 0;
         body = world.createBody(def);
         circle = new CircleShape();
-        angleMove = 180;
-        //count++;
-        active = false;
+        setActive(false);
         //create();
     }
 
@@ -61,9 +57,9 @@ public class  Asteroid extends Subject {
 
 
     public void create() {
-        active = true;
-        float scale = MIN_SCALE + (float)Math.random() * 2f;
-        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * (float)count/5);
+        setActive(true);
+        scale = MIN_SCALE + (float)Math.random() * 2f;
+        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * level);
         float y = (float)Math.random() * GameScreen.HEIGHT;
         float speed = SPEED + (float)Math.random() * SPEED*level;
         if(Math.random() > 0.9)
@@ -79,9 +75,8 @@ public class  Asteroid extends Subject {
         hp = 100f * scale;
         shield = SHIELD * level;
         if(shield > 90) shield = 90;
-        System.out.println("Масса астеройда: " + body.getMass());
-        System.out.println("Размер: " + getSize());
-
+        //System.out.println("Масса астеройда: " + body.getMass());
+        //System.out.println("Размер: " + getSize());
 
     }
 

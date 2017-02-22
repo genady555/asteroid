@@ -46,8 +46,8 @@ public class WorldRenderer {
         for (Asteroid asteroid : world.getAsteroids())
             asteroid.render(batch);
         batch.end();
-        //debugRenderer.render(world.getPhysics(), camera.combined);
-        debug(1000);
+        debugRenderer.render(world.getPhysics(), camera.combined);
+        //debug(1000);
     }
 
     public void debug(float time) {

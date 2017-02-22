@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GdxGame;
 import com.mygdx.view.GameScreen;
+import org.omg.CORBA.DATA_CONVERSION;
 
 import javax.sound.midi.Soundbank;
-
 
 /**
  *
@@ -27,14 +27,21 @@ public class Hero extends Subject {
     final static Texture texture = new Texture("ship80x60.tga");;
     final int BULLETS_COUNT = 100;
     final float DENSITY = 1000f;
+    final static float DAMAGE_BULLET = 100f;
+    final static float DRIVE = 3000;
+    final static float RATE_FIRE = 3;
+    final static int SHIELD = 10;
+    final static float ROTATE = 10;
 
     Bullet[] bullets = new Bullet[BULLETS_COUNT];
+    private float damage = DAMAGE_BULLET;
     private float maxSpeed;
-    private float drive, rotate;
-    private float rateFire;
+    private float drive = DRIVE;
+    private float rotate = ROTATE;
+    private float rateFire = RATE_FIRE;
     private long timeFire, pauseFire;
     private float hp;
-    private int shield = 10;
+    private int shield = SHIELD;
 
 
 //--------------------------------------------------------------------------------
@@ -43,26 +50,24 @@ public class Hero extends Subject {
         super(world, texture);
         PolygonShape poly = new PolygonShape();
         poly.setAsBox(0.7f*getWidth()/2, 0.7f*getHeight()/2);
-        createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY, 0, 0);
+        createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY);
+        poly.dispose();
         //System.out.println(fixture.getShape());
         body.setLinearDamping(0.5f);
         body.setAngularDamping(2f);
-        drive = 3000f;
-        rotate = 2.5f * (float)(Math.PI/180); //в радианах
-        maxSpeed = drive/5;
-        rateFire = 5;
+        //rotate = 2.5f * (float)(Math.PI/180); //в радианах
+        maxSpeed = drive/100;
         pauseFire = (long)(1000f / rateFire);
         timeFire = System.currentTimeMillis();
         for (int i = 0; i < bullets.length; i++)
-            bullets[i] = new Bullet();
-        System.out.println("Моя масса: " + body.getMass());
+            bullets[i] = new Bullet(this);
     }
 
     public Body getBody() { return  body; }
 
     public void start() {
         setSpeed(0, 0);
-        setPosition(1, 6, 0);
+        setPosition(1, GameScreen.HEIGHT/2, 0);
         hp = 100f;
         for (Bullet bullet : bullets) bullet.destroy();
     }
@@ -109,13 +114,13 @@ public class Hero extends Subject {
 
     public void turnLeft() {
         //body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() + rotate);
-        body.applyAngularImpulse(10f, true);
+        body.applyAngularImpulse(rotate, true);
     }
 
     public void turnRight() {
 
         //body.setTransform(body.getPosition().x, body.getPosition().y, body.getAngle() - rotate);
-        body.applyAngularImpulse(-10f, true);
+        body.applyAngularImpulse(-rotate, true);
     }
 
     public void fire() {
@@ -124,17 +129,13 @@ public class Hero extends Subject {
         if(dt >= pauseFire){
             for (Bullet bullet : bullets) {
                 if (bullet.isActive()) continue;
-                bullet.create(body.getPosition().x, body.getPosition().y, getSpeed(), getTurn());
+                bullet.create();
                 break;
             }
             timeFire = time;
         }
 
     }
-
-    public float getWidth() { return sprite.getWidth(); }
-
-    public float getHeight() { return sprite.getHeight(); }
 
     public void showHp() {
         System.out.println("Здоровье: " + (int)hp);
@@ -145,6 +146,10 @@ public class Hero extends Subject {
         hp = hp - value + shield*value/100f;
         showHp();
         return (int)hp <= 0;
+    }
+
+    public float getDamage() {
+        return damage;
     }
 
     public void render(SpriteBatch batch) {

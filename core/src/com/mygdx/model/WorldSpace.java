@@ -4,8 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.GdxGame;
+import com.mygdx.game.InputController;
 import com.mygdx.view.GameScreen;
 
 import java.util.ArrayList;
@@ -18,99 +19,79 @@ import java.util.Set;
  */
 public class WorldSpace {
 
-    final int ASTEROIDS = 10;
-    int level;
+    final int ASTEROIDS_LEVEL = 5;
+    int level = 1;
 
     World  physics;
-    GameScreen screen;
     Background background;
     Hero hero;
     ArrayList<Asteroid> asteroids;
 
+    public WorldSpace() {
+        physics = new World(new Vector2(0, 0), false);
+        physics.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                String clas1 = contact.getFixtureA().getUserData().getClass().toString();
+                String clas2 = contact.getFixtureB().getUserData().getClass().toString();
+                Asteroid a = null;
+                Bullet b = null;
+                Hero h = null;
+                if(clas1.indexOf("Bullet") > 0 && clas2.indexOf("Asteroid") > 0) {
+                    //System.out.println("bullet + asteroid");
+                    b = (Bullet) contact.getFixtureA().getUserData();
+                    b.delete = true;
+                    a = (Asteroid)contact.getFixtureB().getUserData();
+                    a.damage(b.getDamage());
+                }
+                else if(clas1.indexOf("Hero") > 0 && clas2.indexOf("Asteroid") > 0) {
+                    h = (Hero) contact.getFixtureA().getUserData();
+                    a = (Asteroid) contact.getFixtureB().getUserData();
+                    h.damage(a.getDamage());
+                }
+                    //System.out.println("asteroid + hero");
+            }
 
-    public WorldSpace(GameScreen screen) {
-        this.screen = screen;
-        physics = new World(new Vector2(0, 0), true);
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
+        });
         background = new Background();
         hero = new Hero(physics);
         asteroids = new ArrayList<Asteroid>();
     }
 
-    public void start(int level) {
-        this.level = level;
+    public void start() {
         hero.start();
         System.out.println("Уровень: " + level);
-        Asteroid.count = ASTEROIDS;
-        for (int i = 0; i < Asteroid.count; i++)
-            asteroids.add(new Asteroid(level, physics));
-        asteroids.get(0).create();
+        Asteroid.count = ASTEROIDS_LEVEL * level;
+        for (int i = 0; i < ASTEROIDS_LEVEL; i++)
+            asteroids.add(new Asteroid(this));
     }
 
     public void levelUp() {
         level++;
-        start(level);
+        for (Asteroid asteroid : asteroids) {
+            asteroid.create();
+        }
+        start();
     }
 
     public void update(float delta) {
+        physics.step(delta, 4, 4);
         background.update();
-        input();
         hero.update();
         for (int i = 0; i < asteroids.size(); i++)
-            if(asteroids.get(i).update())
-                for (int j = 0; j < asteroids.size(); j++)
-                    if(asteroids.get(j).isActive()) continue;
-                    else {
-                        asteroids.get(j).create();
-                        break;
-                    }
-
-        physics.step(1f/60f, 4, 4);
-        //check();
-    }
-
-    void input() {
-        if(screen.getInput().isAccelerate())
-            hero.accelerate();
-        if(screen.getInput().isBrake())
-            hero.brake();
-        if(screen.getInput().isLeft())
-            hero.turnLeft();
-        if(screen.getInput().isRight())
-            hero.turnRight();
-        if(screen.getInput().isFire())
-            hero.fire();
-    }
-
-    public void check(){
-        for (Bullet bullet : getHero().getBullets()) {
-            if (!bullet.isActive())
-                continue;
-            for (Asteroid asteroid : getAsteroids()) {
-                if (!asteroid.isActive())
-                    continue;
-                if (asteroid.getRectangle().overlaps(bullet.getRectangle())) {
-                    if (asteroid.damage(bullet.getDamage())) {
-                        levelUp();
-                        return;
-                    }
-                    bullet.destroy();
-                    break;
-                }
-            }
-        }
-        for (Asteroid asteroid : getAsteroids()) {
-            if(!asteroid.isActive())
-                continue;
-            if(getHero().getRectangle().overlaps(asteroid.getRectangle())) {
-                if(getHero().damage(asteroid.getDamage())){
-                    System.out.println("Game over!");
-                    for (Asteroid asteroid1 : asteroids) asteroid1.destroy();
-                    start(1);
-                    //state = STATE_GAMEOVER;
-                }
-                asteroid.destroy();
-            }
-        }
+            if(asteroids.get(i).update()) levelUp();
     }
 
     public Background getBackground() { return background; }

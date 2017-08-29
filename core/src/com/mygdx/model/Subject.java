@@ -20,11 +20,10 @@ public class Subject {
     protected Body body;
     protected World world;
     protected Fixture fixture;
-    protected float angleMove;
+    protected boolean delete;
 
     public Subject(World world) {
         this.world = world;
-        count++;
     }
 
     public Subject(World world, Texture texture) {
@@ -50,6 +49,8 @@ public class Subject {
         bDef.fixedRotation = false;
         body = world.createBody(bDef);
         fixture = body.createFixture(shape, density);
+        fixture.setUserData(this);
+        count++;
     }
 
     public Vector2 getPosition() { return body.getPosition(); }
@@ -63,7 +64,7 @@ public class Subject {
     }
 
     public void setPosition(float x, float y, float angle) {
-        body.setTransform(x, y, (float)Math.toRadians(angle));
+        body.setTransform(x, y, angle);
     }
 
     public void setSpeed(float vx, float vy) {
@@ -71,10 +72,6 @@ public class Subject {
     }
 
     public void setSpeed(Vector2 speed) { body.setLinearVelocity(speed); }
-
-    public float getSpeedLenght() {
-        return body.getLinearVelocity().len();
-    }
 
     public Vector2 getSpeed() { return body.getLinearVelocity(); }
 
@@ -100,7 +97,7 @@ public class Subject {
 
     public void render(SpriteBatch batch) {
         if(!active) return;
-        sprite.setCenter(body.getPosition().x, body.getPosition().y);
+        sprite.setCenter(getX(), getY());
         sprite.setRotation((float)Math.toDegrees(getTurn()));
         sprite.draw(batch);
     }
@@ -108,6 +105,7 @@ public class Subject {
     public boolean destroy() {
         setActive(false);
         count--;
+        delete = false;
         world.destroyBody(body);
         return count == 0;
     }

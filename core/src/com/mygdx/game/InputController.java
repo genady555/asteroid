@@ -13,6 +13,7 @@ public class InputController implements InputProcessor {
     private boolean left;
     private boolean right;
     private boolean fire;
+    private int up, down;
 
 
     @Override
@@ -34,7 +35,7 @@ public class InputController implements InputProcessor {
                 right = true;
                 break;
             }
-            case Input.Keys.SPACE: {
+            case Input.Keys.Q: {
                 fire = true;
                 break;
             }
@@ -62,7 +63,7 @@ public class InputController implements InputProcessor {
                 right = false;
                 break;
             }
-            case Input.Keys.SPACE: {
+            case Input.Keys.Q: {
                 fire = false;
                 break;
             }

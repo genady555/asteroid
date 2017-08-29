@@ -28,52 +28,41 @@ public class  Asteroid extends Subject {
 
     static int count;
     static float RADIUS;
+    static WorldSpace world;
 
     private float hp;
     private float scale;
     private int shield;
-    private int level;
+
     private CircleShape circle;
 
-    public Asteroid(int level, World world) {
-        super(world, texture);
+    public Asteroid(WorldSpace world) {
+        super(world.physics, texture);
+        if(Asteroid.world == null) Asteroid.world = world;
         if(RADIUS == 0) RADIUS = 0.8f*sprite.getWidth()/2f;
-        this.level = level;
-        BodyDef def = new BodyDef();
-        def.type = BodyDef.BodyType.DynamicBody;
-        def.allowSleep = true;
-        def.fixedRotation = false;
-        def.linearDamping = 0;
-        body = world.createBody(def);
         circle = new CircleShape();
-        setActive(false);
-        //create();
+        create();
     }
-
-    public void createFixture(float radius) {
-        circle.setRadius(radius);
-        fixture = body.createFixture(circle, DENSITY);
-    }
-
 
     public void create() {
-        setActive(true);
         scale = MIN_SCALE + (float)Math.random() * 2f;
-        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * level);
+        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * world.level);
         float y = (float)Math.random() * GameScreen.HEIGHT;
-        float speed = SPEED + (float)Math.random() * SPEED*level;
+        float speed = SPEED + (float)Math.random() * SPEED*world.level;
         if(Math.random() > 0.9)
-            speed = SPEED * level * 3f;
+            speed = SPEED * world.level * 3f;
         sprite.setScale(scale);
-        createFixture(scale*RADIUS);
+        circle.setRadius(RADIUS*scale);
+        createBody(circle, BodyDef.BodyType.DynamicBody, DENSITY);
+        setActive(true);
         setPosition(x, y);
-        body.setLinearVelocity(-speed, 0);
+        setSpeed(-speed, 0);
         int sign;
         if(Math.random() > 0.5) sign = 1;
         else sign = -1;
         body.setAngularVelocity(speed*sign);
         hp = 100f * scale;
-        shield = SHIELD * level;
+        shield = SHIELD * world.level;
         if(shield > 90) shield = 90;
         //System.out.println("Масса астеройда: " + body.getMass());
         //System.out.println("Размер: " + getSize());
@@ -84,20 +73,19 @@ public class  Asteroid extends Subject {
         if(!active) return false;
         count--;
         super.destroy();
-        System.out.println("Астеройдов: " + count);
+        System.out.println("Астеройдов осталось: " + count);
         return count == 0;
     }
 
-    public boolean damage(float value) {
+    public void damage(float value) {
         hp = hp - value + shield*value/100f;
         System.out.println("Астероид hp: " + hp);
-        if((int)hp <= 0) return destroy();
-        return false;
+        if((int)hp <= 0) delete = true;
     }
 
     public float getDamage() {
 
-        return 0;//(float)DAMAGE *scale;
+        return DAMAGE *scale;
     }
 
     public float getSize() {
@@ -106,10 +94,11 @@ public class  Asteroid extends Subject {
 
     public boolean update() {
         if(!active) return false;
+        if(delete) return destroy();
         if (getX() < - getSize() || getY() < -getSize() || getY() > GameScreen.HEIGHT + getSize()) {
             body.destroyFixture(fixture);
+            super.destroy();
             create();
-            return true;
         }
         return false;
     }

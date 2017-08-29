@@ -25,15 +25,12 @@ public class GameScreen implements Screen{
     public static float HEIGHT = 12f;
 
     private WorldSpace world;
-    private InputController input;
     private WorldRenderer renderer;
 
     public GameScreen(GdxGame game) {
         this.game = game;
-        input = new InputController();
-        Gdx.input.setInputProcessor(input);
         setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        world = new WorldSpace(this);
+        world = new WorldSpace();
         renderer = new WorldRenderer(this, world);
     }
 
@@ -44,11 +41,9 @@ public class GameScreen implements Screen{
         if(HEIGHT < HEIGHT_MIN) HEIGHT = HEIGHT_MIN;
     }
 
-    public InputController getInput() { return input; }
-
     @Override
     public void show() {
-        world.start(1);
+        world.start();
     }
 
     @Override

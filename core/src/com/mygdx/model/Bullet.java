@@ -20,41 +20,43 @@ import com.mygdx.view.GameScreen;
 
 public class Bullet extends Subject {
 
-    final static float SPEED = 5f;
     final static Texture texture = new Texture("bullet20.png");
 
+    static PolygonShape poly;
     static int count;
 
     private Hero hero;
-    float speed = SPEED;
+    private float speed;
+    private float damage;
+
 
     public Bullet(Hero hero) {
         super(hero.world, texture);
         this.hero = hero;
-        PolygonShape poly = new PolygonShape();
-        poly.setAsBox(0.8f*getWidth()/2, 0.7f*getHeight()/2);
-        createBody(poly, BodyDef.BodyType.KinematicBody, 0);
-        poly.dispose();
-        body.setBullet(true);
-        setActive(false);
+        if(poly == null) {
+            poly = new PolygonShape();
+            poly.setAsBox(0.8f * getWidth() / 2, 0.6f * getHeight() / 2);
+        }
+        active = false;
     }
     
     public void create(){
+        active = true;
+        createBody(poly, BodyDef.BodyType.DynamicBody, 0);
+        body.setBullet(false);
+        damage = hero.bulletDef.damage;
+        speed = hero.bulletDef.speed;
         setPosition(hero.getPosition().x + (float)Math.cos(hero.getTurn()) * (hero.getWidth()/2 + getWidth()/2),
                 hero.getPosition().y + (float)Math.sin(hero.getTurn()) * (hero.getWidth()/2 + getHeight()/2),
                 hero.getTurn());
-        setActive(true);
-        setTurn(hero.getTurn());
         setSpeed();
         count++;
-        System.out.println("Скорость пули: " + getSpeedLenght());
-        System.out.println("Угол: " + Math.toDegrees(getTurn()));
     }
 
     void setSpeed() {
-        Vector2 v = new Vector2(hero.getSpeed());
-        v.setLength(v.len() + 100f);
-        System.out.println(v.len());
+        Vector2 v = new Vector2(speed, 0);
+        v.setAngleRad(getTurn());
+        v.add(hero.getSpeed());
         body.setLinearVelocity(v);
     }
 
@@ -66,12 +68,66 @@ public class Bullet extends Subject {
     }
 
     public float getDamage(){
-        return hero.getDamage();
+        return damage;
     }
     
     public void update(){
         if(!active) return;
-        if (getX() > GameScreen.WIDTH + getWidth()/2 || getX() < -getWidth()/2 || getY() < -getHeight()/2 || getY() > GameScreen.HEIGHT + getHeight()/2)
+        if(delete) {
             destroy();
+            return;
+        }
+        if (getX() > (GameScreen.WIDTH + getWidth()/2) ||
+                getX() < -getWidth()/2 || getY() < -getHeight()/2 || getY() > (GameScreen.HEIGHT + getHeight()/2))
+            destroy();
+
+    }
+}
+
+class BulletDef {
+
+    final static int NONE = 0;
+    final static int STANDARD = 1;
+    final static int ADVANCED = 2;
+    final static int BURSTING = 3;
+
+    static private BulletDef[] def;
+
+    public int type;
+    public float damage;
+    public float speed;
+    public float rate;
+
+    private static void create() {
+        if(def == null) {
+            def = new BulletDef[4];
+            def[0] = new BulletDef();
+            def[1] = new BulletDef(STANDARD, 10, 10, 3);
+            def[2] = new BulletDef(ADVANCED, 15, 15, 5);
+            def[3]= new BulletDef(BURSTING, 200, 7, 2);
+        }
+    }
+
+    public BulletDef() {
+        create();
+    }
+
+    private BulletDef(int type, float damage, float speed, float rate) {
+        this.type = type;
+        this.damage = damage;
+        this.speed = speed;
+        this.rate = rate;
+    }
+
+    public BulletDef(int type) {
+        create();
+        change(type);
+    }
+
+    public void change(int type) {
+        this.type = type;
+        damage = def[type].damage;
+        speed = def[type].speed;
+        rate = def[type].rate;
     }
 }

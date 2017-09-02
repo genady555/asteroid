@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class  Asteroid extends Subject {
 
-    final static int SHIELD = 10;
+    final static int SHIELD = 5;
 
     final static int DAMAGE = 25;
     final static float DENSITY = 1000f;
@@ -41,7 +41,7 @@ public class  Asteroid extends Subject {
         if(Asteroid.world == null) Asteroid.world = world;
         if(RADIUS == 0) RADIUS = 0.8f*sprite.getWidth()/2f;
         circle = new CircleShape();
-        create();
+        //create();
     }
 
     public void create() {

@@ -31,7 +31,7 @@ public class Bullet extends Subject {
 
 
     public Bullet(Hero hero) {
-        super(hero.world, texture);
+        super(hero.world.getPhysics(), texture);
         this.hero = hero;
         if(poly == null) {
             poly = new PolygonShape();
@@ -40,15 +40,15 @@ public class Bullet extends Subject {
         active = false;
     }
     
-    public void create(){
+    public void create(float delta){
         active = true;
         createBody(poly, BodyDef.BodyType.DynamicBody, 0);
         body.setBullet(false);
         damage = hero.bulletDef.damage;
         speed = hero.bulletDef.speed;
-        setPosition(hero.getPosition().x + (float)Math.cos(hero.getTurn()) * (hero.getWidth()/2 + getWidth()/2),
-                hero.getPosition().y + (float)Math.sin(hero.getTurn()) * (hero.getWidth()/2 + getHeight()/2),
-                hero.getTurn());
+        setPosition(hero.getPosition().x + (float)Math.cos(hero.getTurn() + delta) * (hero.getWidth()/2 + getWidth()/2),
+                hero.getPosition().y + (float)Math.sin(hero.getTurn() + delta) * (hero.getWidth()/2 + getWidth()/2),
+                hero.getTurn() + delta);
         setSpeed();
         count++;
     }
@@ -102,7 +102,7 @@ class BulletDef {
         if(def == null) {
             def = new BulletDef[4];
             def[0] = new BulletDef();
-            def[1] = new BulletDef(STANDARD, 10, 10, 3);
+            def[1] = new BulletDef(STANDARD, 50, 15, 10);
             def[2] = new BulletDef(ADVANCED, 15, 15, 5);
             def[3]= new BulletDef(BURSTING, 200, 7, 2);
         }

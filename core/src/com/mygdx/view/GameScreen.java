@@ -43,7 +43,7 @@ public class GameScreen implements Screen{
 
     @Override
     public void show() {
-        world.start();
+        world.levelUp();
     }
 
     @Override

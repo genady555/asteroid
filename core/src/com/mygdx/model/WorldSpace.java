@@ -20,7 +20,7 @@ import java.util.Set;
 public class WorldSpace {
 
     final int ASTEROIDS_LEVEL = 5;
-    int level = 1;
+    int level = 0;
 
     World  physics;
     Background background;
@@ -66,7 +66,7 @@ public class WorldSpace {
             }
         });
         background = new Background();
-        hero = new Hero(physics);
+        hero = new Hero(this);
         asteroids = new ArrayList<Asteroid>();
     }
 
@@ -74,15 +74,14 @@ public class WorldSpace {
         hero.start();
         System.out.println("Уровень: " + level);
         Asteroid.count = ASTEROIDS_LEVEL * level;
-        for (int i = 0; i < ASTEROIDS_LEVEL; i++)
-            asteroids.add(new Asteroid(this));
+        for (Asteroid asteroid : asteroids)
+            asteroid.create();
     }
 
     public void levelUp() {
         level++;
-        for (Asteroid asteroid : asteroids) {
-            asteroid.create();
-        }
+        for (int i = 0; i < ASTEROIDS_LEVEL; i++)
+            asteroids.add(new Asteroid(this));
         start();
     }
 

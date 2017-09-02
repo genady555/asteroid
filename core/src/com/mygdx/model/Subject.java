@@ -91,7 +91,7 @@ public class Subject {
         return body.getPosition().y;
     }
 
-    public float getTurn(){
+    public float getTurn(){ //Angle in radians
         return body.getAngle();
     }
 

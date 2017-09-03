@@ -20,9 +20,9 @@ public class  Asteroid extends Subject {
 
     final static int SHIELD = 5;
 
-    final static int DAMAGE = 25;
+    final static int DAMAGE = 50;
     final static float DENSITY = 1000f;
-    final static float SPEED = 2.5f;
+    final static float SPEED = 2f;
     final static float MIN_SCALE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
 
@@ -33,6 +33,7 @@ public class  Asteroid extends Subject {
     private float hp;
     private float scale;
     private int shield;
+    private float speed;
 
     private CircleShape circle;
 
@@ -41,16 +42,17 @@ public class  Asteroid extends Subject {
         if(Asteroid.world == null) Asteroid.world = world;
         if(RADIUS == 0) RADIUS = 0.8f*sprite.getWidth()/2f;
         circle = new CircleShape();
+        active = false;
         //create();
     }
 
     public void create() {
-        scale = MIN_SCALE + (float)Math.random() * 2f;
-        float x = GameScreen.WIDTH + (float)Math.random() * (GameScreen.WIDTH * world.level);
+        scale = MIN_SCALE + (float)Math.random() * 2;
+        float x = GameScreen.WIDTH + (float)Math.random() * GameScreen.WIDTH;
         float y = (float)Math.random() * GameScreen.HEIGHT;
-        float speed = SPEED + (float)Math.random() * SPEED*world.level;
+        speed = 1 + (float)Math.random() * SPEED*world.level;
         if(Math.random() > 0.9)
-            speed = SPEED * world.level * 3f;
+            speed = SPEED * world.level * 3;
         sprite.setScale(scale);
         circle.setRadius(RADIUS*scale);
         createBody(circle, BodyDef.BodyType.DynamicBody, DENSITY);
@@ -64,6 +66,7 @@ public class  Asteroid extends Subject {
         hp = 100f * scale;
         shield = SHIELD * world.level;
         if(shield > 90) shield = 90;
+        System.out.println("Asteroid create");
         //System.out.println("Масса астеройда: " + body.getMass());
         //System.out.println("Размер: " + getSize());
 
@@ -79,13 +82,13 @@ public class  Asteroid extends Subject {
 
     public void damage(float value) {
         hp = hp - value + shield*value/100f;
-        System.out.println("Астероид hp: " + hp);
+        //System.out.println("Астероид hp: " + hp);
         if((int)hp <= 0) delete = true;
     }
 
     public float getDamage() {
-
-        return DAMAGE *scale;
+        return DAMAGE*scale;
+        //return body.getMass()*speed/500;
     }
 
     public float getSize() {
@@ -94,7 +97,12 @@ public class  Asteroid extends Subject {
 
     public boolean update() {
         if(!active) return false;
-        if(delete) return destroy();
+        if(delete) {
+            if(destroy()) return true;
+            if(count >= world.ASTEROIDS_LEVEL)
+                create();
+            return false;
+        }
         if (getX() < - getSize() || getY() < -getSize() || getY() > GameScreen.HEIGHT + getSize()) {
             body.destroyFixture(fixture);
             super.destroy();

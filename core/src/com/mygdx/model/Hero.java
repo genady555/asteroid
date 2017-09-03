@@ -30,9 +30,9 @@ public class Hero extends Subject {
     final static Texture texture = new Texture("ship80x60.tga");
     final int BULLETS_COUNT = 100;
     final float DENSITY = 1000f;
-    final float DRIVE = 3000;
+    final float DRIVE = 4000;
     final int SHIELD = 10;
-    final float ROTATE = 10;
+    final float ROTATE = 15;
     final float WIDTH = 1f;
     final float HEIGHT = 0.7f;
     final public WorldSpace world;

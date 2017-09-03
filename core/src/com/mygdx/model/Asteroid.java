@@ -87,8 +87,8 @@ public class  Asteroid extends Subject {
     }
 
     public float getDamage() {
-        return DAMAGE*scale;
-        //return body.getMass()*speed/500;
+        //return DAMAGE*scale;
+        return body.getMass()*speed;
     }
 
     public float getSize() {

@@ -29,10 +29,10 @@ public class Hero extends Subject {
 
     final static Texture texture = new Texture("ship80x60.tga");
     final int BULLETS_COUNT = 100;
-    final float DENSITY = 1000f;
-    final float DRIVE = 4000;
-    final int SHIELD = 10;
-    final float ROTATE = 15;
+    final float DENSITY = 300f;
+    final float DRIVE = 1200;
+    final int SHIELD = 100;
+    final float ROTATE = 5;
     final float WIDTH = 1f;
     final float HEIGHT = 0.7f;
     final public WorldSpace world;
@@ -64,8 +64,8 @@ public class Hero extends Subject {
         poly.setAsBox(WIDTH/2, HEIGHT/2);
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY);
         poly.dispose();
-        body.setLinearDamping(0.1f);
-        body.setAngularDamping(2f);
+        body.setLinearDamping(0.2f);
+        body.setAngularDamping(2.5f);
         maxSpeed = drive/100;
         timeFire = System.currentTimeMillis();
         bullets = new ArrayList<>();
@@ -208,10 +208,19 @@ public class Hero extends Subject {
 
     }
 
-    public void damage(float value) {
-        //System.out.println("астеройд damage: " + (int)value);
-        hp = hp - value + shield*value/100f;
-        if(hp <= 0) {
+    public void damage(Asteroid a) {
+        //float d = value/shield;
+        //System.out.println("астеройд damage: " + (int)d);
+        //hp = hp - value + shield*value/100f;
+        Vector2 va = a.getSpeed();
+        Vector2 vh = getSpeed();
+        Vector2 v = new Vector2(vh.x - va.x, vh.y - va.y);
+        float speed = v.len();
+        System.out.println("Скорость столкновения: " + speed);
+        float d = a.body.getMass()*speed/shield;
+        System.out.println("Повреждение: " + d);
+        hp = hp - d;
+        if((int)hp <= 0) {
             System.out.println("Меня убили!");
             delete = true;
         }

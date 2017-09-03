@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class WorldSpace {
 
-    final int ASTEROIDS_LEVEL = 10;
+    final int ASTEROIDS_LEVEL = 5;
     int level = 0;
 
     World  physics;
@@ -47,7 +47,7 @@ public class WorldSpace {
                 else if(clas1.indexOf("Hero") > 0 && clas2.indexOf("Asteroid") > 0) {
                     h = (Hero) contact.getFixtureA().getUserData();
                     a = (Asteroid) contact.getFixtureB().getUserData();
-                    h.damage(a.getDamage());
+                    h.damage(a);
                 }
                     //System.out.println("asteroid + hero");
             }

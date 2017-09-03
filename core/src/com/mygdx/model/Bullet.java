@@ -42,7 +42,7 @@ public class Bullet extends Subject {
     
     public void create(float delta){
         active = true;
-        createBody(poly, BodyDef.BodyType.DynamicBody, 0);
+        createBody(poly, BodyDef.BodyType.DynamicBody, 1000);
         body.setBullet(false);
         damage = hero.bulletDef.damage;
         speed = hero.bulletDef.speed;

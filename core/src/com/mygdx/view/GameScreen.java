@@ -31,7 +31,7 @@ public class GameScreen implements Screen{
         this.game = game;
         setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         world = new WorldSpace();
-        renderer = new WorldRenderer(this, world);
+        renderer = new WorldRenderer(world);
     }
 
     private void setSize(int w, int h){

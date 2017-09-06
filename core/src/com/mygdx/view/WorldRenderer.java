@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.mygdx.game.GdxGame;
 import com.mygdx.model.Asteroid;
 import com.mygdx.model.WorldSpace;
 
@@ -15,7 +16,6 @@ import com.mygdx.model.WorldSpace;
  */
 public class WorldRenderer {
 
-    final GameScreen screen;
     final WorldSpace world;
 
     private SpriteBatch batch;
@@ -26,8 +26,7 @@ public class WorldRenderer {
     private long counterTime;
 
 
-    public WorldRenderer(GameScreen screen, WorldSpace world) {
-        this.screen = screen;
+    public WorldRenderer(WorldSpace world) {
         this.world = world;
         batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
@@ -46,6 +45,7 @@ public class WorldRenderer {
         world.getHero().render(batch);
         for (Asteroid asteroid : world.getAsteroids())
             asteroid.render(batch);
+        GdxGame.font.draw(batch, "First font! фыва фыва жождлолдо джллож лол жо ", 1, 100);
         batch.end();
         debugRenderer.render(world.getPhysics(), camera.combined);
         //debug(1000);

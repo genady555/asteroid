@@ -20,6 +20,7 @@ public class WorldRenderer {
 
     private SpriteBatch batch;
     public OrthographicCamera camera;
+    public OrthographicCamera camera_origin;
     private Box2DDebugRenderer debugRenderer;
 
     private long lastTime;
@@ -31,6 +32,9 @@ public class WorldRenderer {
         batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
+        camera_origin = new OrthographicCamera();
+        camera_origin.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera_origin.position.set(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, 0);
         lastTime = System.currentTimeMillis();
         //camera.setToOrtho(false, screen.WIDTH, screen.HEIGHT);
         //camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
@@ -45,6 +49,7 @@ public class WorldRenderer {
         world.getHero().render(batch);
         for (Asteroid asteroid : world.getAsteroids())
             asteroid.render(batch);
+        batch.setProjectionMatrix(camera_origin.combined);
         GdxGame.font.draw(batch, "First font! фыва фыва жождлолдо джллож лол жо ", 1, 100);
         batch.end();
         debugRenderer.render(world.getPhysics(), camera.combined);

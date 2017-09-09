@@ -26,7 +26,7 @@ public class  Asteroid extends Subject {
     final static float MIN_SCALE = 0.25f;
     final static Texture texture = new Texture("asteroid60.tga");;
 
-    static int count;
+    static public int count;
     static float RADIUS;
     static WorldSpace world;
 
@@ -50,9 +50,9 @@ public class  Asteroid extends Subject {
         scale = MIN_SCALE + (float)Math.random() * 2;
         float x = GameScreen.WIDTH + (float)Math.random() * GameScreen.WIDTH;
         float y = (float)Math.random() * GameScreen.HEIGHT;
-        speed = 1 + (float)Math.random() * SPEED*world.level;
+        speed = 1 + (float)Math.random() * SPEED*world.game.state.level;
         if(Math.random() > 0.9)
-            speed = SPEED * world.level * 3;
+            speed = SPEED * world.game.state.level * 3;
         sprite.setScale(scale);
         circle.setRadius(RADIUS*scale);
         createBody(circle, BodyDef.BodyType.DynamicBody, DENSITY);
@@ -64,9 +64,8 @@ public class  Asteroid extends Subject {
         else sign = -1;
         body.setAngularVelocity(speed*sign);
         hp = 100f * scale;
-        shield = SHIELD * world.level;
+        shield = SHIELD * world.game.state.level;
         if(shield > 90) shield = 90;
-        System.out.println("Asteroid create");
         //System.out.println("Масса астеройда: " + body.getMass());
         //System.out.println("Размер: " + getSize());
 
@@ -76,7 +75,7 @@ public class  Asteroid extends Subject {
         if(!active) return false;
         count--;
         super.destroy();
-        System.out.println("Астеройдов осталось: " + count);
+        //System.out.println("Астеройдов осталось: " + count);
         return count == 0;
     }
 

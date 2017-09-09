@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.GameState;
 import com.mygdx.game.GdxGame;
 import com.mygdx.game.InputController;
 import com.mygdx.view.GameScreen;
@@ -58,8 +59,7 @@ public class Hero extends Subject {
         super(world.getPhysics(), texture);
         this.world = world;
         hpBar = new MySprite(new Texture("hp.png"));
-        input = new InputController();
-        Gdx.input.setInputProcessor(input);
+        input = GameScreen.input;
         PolygonShape poly = new PolygonShape();
         poly.setAsBox(WIDTH/2, HEIGHT/2);
         createBody(poly, BodyDef.BodyType.DynamicBody, DENSITY);
@@ -79,6 +79,7 @@ public class Hero extends Subject {
     public void start() {
         pauseFire = (long)(1000f / bulletDef.rate);
         setSpeed(0, 0);
+        body.setAngularVelocity(0);
         setPosition(1, GameScreen.HEIGHT/2, 0);
         hp = 100f;
         for (Bullet bullet : bullets) bullet.destroy();
@@ -91,6 +92,11 @@ public class Hero extends Subject {
             delete = false;
             for(Asteroid asteroid : world.getAsteroids())
                 asteroid.destroy();
+            world.game.state.lives--;
+            if(world.game.state.lives == 0) {
+                world.game.state.state = GameState.State.GAME_OVER;
+                return;
+            }
             world.start();
         }
         input();

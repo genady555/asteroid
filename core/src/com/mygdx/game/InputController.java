@@ -13,34 +13,52 @@ public class InputController implements InputProcessor {
     private boolean left;
     private boolean right;
     private boolean fire;
-    private int up, down;
+    private GdxGame game;
 
+    public InputController(GdxGame game){
+        this.game = game;
+    }
 
     @Override
     public boolean keyDown(int keycode) {
-        switch (keycode){
-            case Input.Keys.UP: {
-                accelerate = true;
-                break;
-            }
-            case Input.Keys.DOWN: {
-                brake = true;
-                break;
-            }
-            case Input.Keys.LEFT: {
-                left = true;
-                break;
-            }
-            case Input.Keys.RIGHT: {
-                right = true;
-                break;
-            }
-            case Input.Keys.Q: {
-                fire = true;
-                break;
-            }
+        if(game.state.state == GameState.State.START)
+            game.state.state = GameState.State.PLAY;
+        else if(game.state.state == GameState.State.GAME_OVER) {
+            game.state = new GameState();
         }
+        else if(game.state.state == GameState.State.PAUSE){
+            if(keycode == Input.Keys.P)
+                game.state.state = GameState.State.PLAY;
+        }
+        else if(game.state.state == GameState.State.PLAY) {
+            switch (keycode) {
+                case Input.Keys.UP: {
+                    accelerate = true;
+                    break;
+                }
+                case Input.Keys.DOWN: {
+                    brake = true;
+                    break;
+                }
+                case Input.Keys.LEFT: {
+                    left = true;
+                    break;
+                }
+                case Input.Keys.RIGHT: {
+                    right = true;
+                    break;
+                }
+                case Input.Keys.Q: {
+                    fire = true;
+                    break;
+                }
+                case Input.Keys.P: {
+                    game.state.state = GameState.State.PAUSE;
+                    break;
+                }
+            }
 
+        }
         return false;
     }
 

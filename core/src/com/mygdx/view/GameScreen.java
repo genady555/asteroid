@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.mygdx.game.GameState;
 import com.mygdx.game.GdxGame;
 import com.mygdx.game.InputController;
 import com.mygdx.model.Asteroid;
@@ -21,16 +22,22 @@ public class GameScreen implements Screen{
     final static public float WIDTH_MIN = 10;
     final static public float HEIGHT_MIN = 5;
     final public GdxGame game;
+
+    SpriteBatch batch;
     public static float WIDTH = 22f; //размер экрана в юнитах
     public static float HEIGHT = 12f;
 
     private WorldSpace world;
     private WorldRenderer renderer;
+    static public InputController input;
 
     public GameScreen(GdxGame game) {
         this.game = game;
+        batch = new SpriteBatch();
+        input = new InputController(game);
+        Gdx.input.setInputProcessor(input);
         setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        world = new WorldSpace();
+        world = new WorldSpace(game);
         renderer = new WorldRenderer(world);
     }
 
@@ -49,7 +56,7 @@ public class GameScreen implements Screen{
     @Override
     public void render(float delta) {
         world.update(delta);
-        renderer.render();
+        renderer.render(batch);
     }
 
     @Override
@@ -58,6 +65,7 @@ public class GameScreen implements Screen{
         renderer.camera.setToOrtho(false, WIDTH, HEIGHT);
         //renderer.camera.position.set(WIDTH/2, HEIGHT/2, 0);
         renderer.camera.update();
+        game.state.resize();
         world.getBackground().resize();
     }
 
@@ -80,5 +88,6 @@ public class GameScreen implements Screen{
     public void dispose() {
         world.dispose();
         renderer.dispose();
+        batch.dispose();
     }
 }

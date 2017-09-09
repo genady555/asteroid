@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.game.GameState;
 import com.mygdx.game.GdxGame;
 import com.mygdx.game.InputController;
 import com.mygdx.view.GameScreen;
@@ -20,14 +21,15 @@ import java.util.Set;
 public class WorldSpace {
 
     final int ASTEROIDS_LEVEL = 5;
-    int level = 0;
 
     World  physics;
+    public GdxGame game;
     Background background;
     Hero hero;
     ArrayList<Asteroid> asteroids;
 
-    public WorldSpace() {
+    public WorldSpace(GdxGame game) {
+        this.game = game;
         physics = new World(new Vector2(0, 0), false);
         physics.setContactListener(new ContactListener() {
             @Override
@@ -71,26 +73,29 @@ public class WorldSpace {
     }
 
     public void start() {
+        game.state.state= GameState.State.START;
         hero.start();
-        System.out.println("Уровень: " + level);
-        Asteroid.count = ASTEROIDS_LEVEL * level;
+        //System.out.println("Уровень: " + game.state.level);
+        Asteroid.count = ASTEROIDS_LEVEL * game.state.level;
         for (int i = 0; i < ASTEROIDS_LEVEL; i++)
             asteroids.get(i).create();
     }
 
     public void levelUp() {
-        level++;
+        game.state.level++;
         for (int i = 0; i < ASTEROIDS_LEVEL; i++)
             asteroids.add(new Asteroid(this));
         start();
     }
 
     public void update(float delta) {
-        physics.step(delta, 4, 4);
         background.update();
-        hero.update();
-        for (int i = 0; i < ASTEROIDS_LEVEL; i++)
-            if(asteroids.get(i).update()) levelUp();
+        if(game.state.state == GameState.State.PLAY) {
+            physics.step(delta, 4, 4);
+            hero.update();
+            for (int i = 0; i < ASTEROIDS_LEVEL; i++)
+                if (asteroids.get(i).update()) levelUp();
+        }
     }
 
     public Background getBackground() { return background; }

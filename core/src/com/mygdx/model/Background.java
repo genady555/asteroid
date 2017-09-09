@@ -16,7 +16,7 @@ import com.mygdx.view.GameScreen;
  */
 public class Background extends MySprite {
     
-    private final float STARS_DENSITY = 3;
+    private final float STARS_DENSITY = 2;
     private Star[] stars;
     static Texture texture = new Texture("bg.png");;
     private int starsCount;

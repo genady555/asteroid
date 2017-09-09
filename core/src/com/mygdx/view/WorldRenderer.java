@@ -7,9 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.mygdx.game.GameState;
 import com.mygdx.game.GdxGame;
+import com.mygdx.game.InputController;
 import com.mygdx.model.Asteroid;
 import com.mygdx.model.WorldSpace;
+
+import javax.swing.plaf.nimbus.State;
 
 /**
  * Created by genady on 19.02.2017.
@@ -18,9 +22,7 @@ public class WorldRenderer {
 
     final WorldSpace world;
 
-    private SpriteBatch batch;
     public OrthographicCamera camera;
-    public OrthographicCamera camera_origin;
     private Box2DDebugRenderer debugRenderer;
 
     private long lastTime;
@@ -29,30 +31,30 @@ public class WorldRenderer {
 
     public WorldRenderer(WorldSpace world) {
         this.world = world;
-        batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
-        camera_origin = new OrthographicCamera();
-        camera_origin.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera_origin.position.set(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2, 0);
         lastTime = System.currentTimeMillis();
         //camera.setToOrtho(false, screen.WIDTH, screen.HEIGHT);
         //camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
     }
 
-    public void render() {
+    public void render(SpriteBatch batch) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        batch.setProjectionMatrix(camera.combined);
         world.getBackground().render(batch);
-        world.getHero().render(batch);
-        for (Asteroid asteroid : world.getAsteroids())
-            asteroid.render(batch);
-        batch.setProjectionMatrix(camera_origin.combined);
-        GdxGame.font.draw(batch, "First font! фыва фыва жождлолдо джллож лол жо ", 1, 100);
-        batch.end();
-        debugRenderer.render(world.getPhysics(), camera.combined);
+        if(world.game.state.state == GameState.State.PLAY || world.game.state.state == GameState.State.PAUSE) {
+            world.getHero().render(batch);
+            for (Asteroid asteroid : world.getAsteroids())
+                asteroid.render(batch);
+            world.game.state.showState(batch);
+            debugRenderer.render(world.getPhysics(), camera.combined);
+        }
+        else if(world.game.state.state == GameState.State.START)
+            world.game.state.showStart(batch);
+        else if(world.game.state.state == GameState.State.GAME_OVER)
+            world.game.state.showGameOver(batch);
         //debug(1000);
     }
 
@@ -70,6 +72,5 @@ public class WorldRenderer {
 
     public void dispose(){
         debugRenderer.dispose();
-        batch.dispose();
     }
 }

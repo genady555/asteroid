@@ -13,22 +13,25 @@ import com.mygdx.view.GameScreen;
 
 public class GdxGame extends Game {
 
-    static public BitmapFont font;
+    public GameState state;
+
+    static public BitmapFont createFont(String file, int size, Color color){
+        final String FONT_CHARS = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(file));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.characters = FONT_CHARS;
+        parameter.size = size;
+        parameter.color = color;
+        BitmapFont font = generator.generateFont(parameter);
+        generator.dispose();
+        return font;
+    }
 
 //---------------------------------------------------------------------------------
 
     @Override
     public void create () {
-
-        final String FONT_CHARS = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/input.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.characters = FONT_CHARS;
-        parameter.size = 30;
-        parameter.color = Color.RED;
-        font = generator.generateFont(parameter);
-        generator.dispose();
-
+        state = new GameState();
         setScreen(new GameScreen(this));
     }
 

@@ -18,14 +18,14 @@ import com.mygdx.model.WorldSpace;
  */
 public class GameScreen implements Screen{
 
-    final static public float UNIT_SIZE = 60f; //размер юнита в пикселях
+    final static public int UNIT_SIZE = 60; //размер юнита в пикселях
     final static public float WIDTH_MIN = 10;
     final static public float HEIGHT_MIN = 5;
     final public GdxGame game;
 
     SpriteBatch batch;
-    public static float WIDTH = 22f; //размер экрана в юнитах
-    public static float HEIGHT = 12f;
+    public static float WIDTH = 20f; //размер экрана в юнитах
+    public static float HEIGHT = 10f;
 
     private WorldSpace world;
     private WorldRenderer renderer;
@@ -36,7 +36,7 @@ public class GameScreen implements Screen{
         batch = new SpriteBatch();
         input = new InputController(game);
         Gdx.input.setInputProcessor(input);
-        setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.graphics.setWindowedMode((int)(WIDTH*UNIT_SIZE), (int)(HEIGHT*UNIT_SIZE));
         world = new WorldSpace(game);
         renderer = new WorldRenderer(world);
     }

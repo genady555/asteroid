@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.mygdx.model.*;
 import com.mygdx.view.GameScreen;
+import com.mygdx.view.MenuScreen;
 
 public class GdxGame extends Game {
 
@@ -32,7 +33,8 @@ public class GdxGame extends Game {
     @Override
     public void create () {
         state = new GameState();
-        setScreen(new GameScreen(this));
+        //setScreen(new GameScreen(this));
+        setScreen(new MenuScreen(this));
     }
 
 }

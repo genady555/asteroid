@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.mygdx.view.MenuScreen;
 
 /**
  * Created by genady on 18.02.2017.
@@ -25,6 +26,7 @@ public class InputController implements InputProcessor {
             game.state.state = GameState.State.PLAY;
         else if(game.state.state == GameState.State.GAME_OVER) {
             game.state = new GameState();
+            game.setScreen(new MenuScreen(game));
         }
         else if(game.state.state == GameState.State.PAUSE){
             if(keycode == Input.Keys.P)

@@ -34,17 +34,18 @@ public class Background extends MySprite {
     
     @Override
     public void render(SpriteBatch batch) {
-        //super.render(batch);
+        super.render(batch);
         for (int i = 0; i < starsCount; i++)
             stars[i].render(batch);
     }
-    
+
     public void update(){
         for (int i = 0; i < starsCount; i++) {
             stars[i].update();
         }
     }
-    
+
+
 }
 
 //------------------------------------------------------------------------------------

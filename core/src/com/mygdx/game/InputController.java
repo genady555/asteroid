@@ -26,7 +26,7 @@ public class InputController implements InputProcessor {
             game.state.state = GameState.State.PLAY;
         else if(game.state.state == GameState.State.GAME_OVER) {
             game.state = new GameState();
-            game.setScreen(new MenuScreen(game));
+            game.setScreen(game.menuScreen);
         }
         else if(game.state.state == GameState.State.PAUSE){
             if(keycode == Input.Keys.P)

@@ -18,7 +18,7 @@ public class GameState {
 
     public int level = 0;
     public int score = 0;
-    public int lives = 5;
+    public int lives = 1;
     public State state = State.START;
     private BitmapFont font;
     private OrthographicCamera camera_origin;

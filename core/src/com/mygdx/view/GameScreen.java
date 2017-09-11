@@ -21,24 +21,18 @@ public class GameScreen implements Screen{
     final static public int UNIT_SIZE = 60; //размер юнита в пикселях
     final static public float WIDTH_MIN = 10;
     final static public float HEIGHT_MIN = 5;
-    final public GdxGame game;
-
-    SpriteBatch batch;
     public static float WIDTH = 20f; //размер экрана в юнитах
     public static float HEIGHT = 10f;
+    static public InputController input;
 
+    final public GdxGame game;
     private WorldSpace world;
     private WorldRenderer renderer;
-    static public InputController input;
+
 
     public GameScreen(GdxGame game) {
         this.game = game;
-        batch = new SpriteBatch();
         input = new InputController(game);
-        Gdx.input.setInputProcessor(input);
-        Gdx.graphics.setWindowedMode((int)(WIDTH*UNIT_SIZE), (int)(HEIGHT*UNIT_SIZE));
-        world = new WorldSpace(game);
-        renderer = new WorldRenderer(world);
     }
 
     private void setSize(int w, int h){
@@ -50,13 +44,17 @@ public class GameScreen implements Screen{
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(input);
+        //Gdx.graphics.setWindowedMode((int)(WIDTH*UNIT_SIZE), (int)(HEIGHT*UNIT_SIZE));
+        world = new WorldSpace(game);
+        renderer = new WorldRenderer(world);
         world.levelUp();
     }
 
     @Override
     public void render(float delta) {
         world.update(delta);
-        renderer.render(batch);
+        renderer.render();
     }
 
     @Override
@@ -88,6 +86,5 @@ public class GameScreen implements Screen{
     public void dispose() {
         world.dispose();
         renderer.dispose();
-        batch.dispose();
     }
 }

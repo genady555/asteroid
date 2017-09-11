@@ -24,6 +24,7 @@ public class WorldRenderer {
 
     public OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
+    private SpriteBatch batch;
 
     private long lastTime;
     private long counterTime;
@@ -31,6 +32,7 @@ public class WorldRenderer {
 
     public WorldRenderer(WorldSpace world) {
         this.world = world;
+        batch = new SpriteBatch();
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
         lastTime = System.currentTimeMillis();
@@ -38,7 +40,7 @@ public class WorldRenderer {
         //camera.position.set(screen.WIDTH/2, screen.HEIGHT/2, 0);
     }
 
-    public void render(SpriteBatch batch) {
+    public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -72,5 +74,6 @@ public class WorldRenderer {
 
     public void dispose(){
         debugRenderer.dispose();
+        batch.dispose();
     }
 }

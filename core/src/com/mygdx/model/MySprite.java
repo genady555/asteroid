@@ -19,8 +19,6 @@ import com.mygdx.view.GameScreen;
  */
 class MySprite extends Sprite{
 
-    static protected SpriteBatch batch;
-
     protected float speed;
     protected boolean active = true;
     protected float angleMove;
@@ -62,8 +60,5 @@ class MySprite extends Sprite{
         if(active) draw(batch);
     }
 
-    public void dispose() {
-        getTexture().dispose();
-    }
        
 }

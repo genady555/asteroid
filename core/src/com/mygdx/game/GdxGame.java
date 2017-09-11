@@ -15,6 +15,8 @@ import com.mygdx.view.MenuScreen;
 public class GdxGame extends Game {
 
     public GameState state;
+    public GameScreen gameScreen;
+    public MenuScreen menuScreen;
 
     static public BitmapFont createFont(String file, int size, Color color){
         final String FONT_CHARS = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
@@ -33,8 +35,9 @@ public class GdxGame extends Game {
     @Override
     public void create () {
         state = new GameState();
-        //setScreen(new GameScreen(this));
-        setScreen(new MenuScreen(this));
+        menuScreen = new MenuScreen(this);
+        gameScreen = new GameScreen(this);
+        setScreen(menuScreen);
     }
 
 }
